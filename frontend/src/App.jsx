@@ -1,35 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [countries, setCountries] = useState([]);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    console.log('Fetching countries...'); // Log fetching action
+    axios.get('/api/countries') 
+      .then((response) => {
+        console.log('Response received:', response.data); // Log the response data
+        setCountries(response.data);
+      })
+      .catch((error) => {
+        console.log('An error has occurred:', error); // Log error details
+        setError('Failed to load countries.');
+      });
+  }, []); 
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <h1>Testing Phase</h1>
+      {error && <p>{error}</p>}
+      {countries.length > 0 ? (
+        countries.map((country) => (
+          <div key={country.rank}>
+            <h3>{country.name}</h3>
+            <p>{country.description}</p>
+          </div>
+        ))
+      ) : (
+        <p>Loading countries...</p>
+      )}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
